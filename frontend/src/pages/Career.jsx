@@ -177,44 +177,8 @@ export default function Career() {
     } finally {
       setSending(false);
     }
-  }; {
-    event.preventDefault();
-    if (!selectedJob || !resume) {
-      setApplicationError("Choose a resume file before submitting your application.");
-      return;
-    }
-    if (!/\.(pdf|doc|docx)$/i.test(resume.name)) {
-      setApplicationError("Resume must be a PDF, DOC, or DOCX file.");
-      return;
-    }
-    if (resume.size > MAX_RESUME_SIZE) {
-      setApplicationError("Resume file must be 5 MB or smaller.");
-      return;
-    }
-
-    setSending(true);
-    setApplicationError("");
-    const application = new FormData();
-    application.append("job_id", selectedJob.id);
-    Object.entries(form).forEach(([key, value]) => application.append(key, value));
-    application.append("resume", resume);
-    try {
-      await axios.post(`${API}/careers/applications`, application);
-      setSuccess(`Your application for ${selectedJob.title} was submitted successfully.`);
-      setSelectedJob(null);
-      setForm(EMPTY_FORM);
-      setResume(null);
-    } catch (error) {
-      const detail = error.response?.data?.detail;
-      setApplicationError(
-        typeof detail === "string"
-          ? detail
-          : "Your application could not be submitted. Please try again.",
-      );
-    } finally {
-      setSending(false);
-    }
   };
+
 
   return (
     <>
