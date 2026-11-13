@@ -1,0 +1,146 @@
+{
+  "project_name": "Godavari Wave Technologies Corporate Redesign",
+  "archetype": "Electric & Cyber-Precision Corporate (Dark Navy + Cyan + Electric Blue)",
+  "theme": "Dark Mode (Deep Navy #050B16, Secondary Slate-Navy #071426, Electric Blue #087BFF, Cyan #00C8FF, Crisp White #FFFFFF)",
+  "context_type": "MARKETING PAGES & HIGH-END SaaS CORPORATE SITE",
+  "fonts": {
+    "heading_font": "Plus Jakarta Sans, sans-serif (Display, bold, tight tracking)",
+    "body_font": "Inter, sans-serif (Clean, highly readable)",
+    "mono_font": "JetBrains Mono, monospace (Tech details, stats, badges)",
+    "rules": [
+      "Headings text-4xl sm:text-5xl lg:text-6xl with tracking-tight and linear gradient text overlay (from-white via-slate-100 to-cyan-400)",
+      "Do NOT use Inter for main hero heading — use Plus Jakarta Sans or Outfit for expressive impact",
+      "Overlines / badges MUST be Uppercase + Tiny + Wide Spacing (tracking-[0.2em] text-cyan-400 font-mono text-xs)",
+      "Body text font-normal text-slate-300 leading-relaxed text-base"
+    ]
+  },
+  "colors": {
+    "background": "#050B16",
+    "background_secondary": "#071426",
+    "surface_card": "rgba(7, 20, 38, 0.7)",
+    "surface_glass": "backdrop-blur-xl bg-[#071426]/70 border border-cyan-500/20 shadow-[0_8px_32px_rgba(0,200,255,0.08)]",
+    "primary_electric_blue": "#087BFF",
+    "accent_cyan": "#00C8FF",
+    "accent_glow": "rgba(0, 200, 255, 0.4)",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#94A3B8",
+    "text_muted": "#64748B",
+    "border_glowing": "border border-cyan-500/30 hover:border-cyan-400/80 transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,200,255,0.25)]",
+    "rules": [
+      "NO flat black #000000; Tint all backgrounds with deep dark navy #050B16",
+      "Gradients max 20% area; use subtle radial glows in hero and section backgrounds (bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/30 via-[#050B16] to-[#050B16])",
+      "Hover text color MUST be explicitly set (e.g., hover:text-cyan-300)"
+    ]
+  },
+  "glassmorphism_and_effects": {
+    "cards": "bg-[#071426]/60 backdrop-blur-md border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 sm:p-8 transition-all duration-300 hover:shadow-[0_10px_30px_rgba(8,123,255,0.15)] relative overflow-hidden group",
+    "tracing_beam": "Glowing animated border line on high-priority cards using relative container + absolute inset rounded div with gradient spin or framer-motion glow border",
+    "noise_overlay": "Subtle grain background overlay to prevent digital flatness",
+    "glowing_dots_grid": "Background SVG dots grid pattern with cyan/blue mask fading out towards edges"
+  },
+  "spacing_and_layout": {
+    "section_padding": "py-20 sm:py-28 lg:py-36 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto",
+    "hero_spacing": "pt-32 pb-20 sm:pt-40 sm:pb-32",
+    "grid_modes": {
+      "bento_marketing": "grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-6 lg:gap-8",
+      "services_grid": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8",
+      "tech_stack_grid": "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
+    }
+  },
+  "motion_and_interactions": {
+    "lenis_scroll": "Smooth momentum scroll using Lenis or Framer Motion smooth scroll wrapper",
+    "hero_reveal": "Kinetic masked line-by-line reveal using Framer Motion initial {{y: 40, opacity: 0}} animate {{y: 0, opacity: 1}} transition {{staggerChildren: 0.15}}",
+    "scroll_trigger": "Framer motion viewport {{once: true, amount: 0.2}} fade up & scale in",
+    "floating_3d_mockup": "Animated 3D floating dashboard/laptop frame with subtle hover tilt effect (rotateX/rotateY mouse follow or continuous floating float-anim)",
+    "marquee": "Slow editorial marquee for 480+ software clients & 353+ digital marketing clients using react-fast-marquee or CSS marquee infinite translate animation",
+    "counter_animation": "Animated statistics counter triggering on scroll (480+ Clients, 353+ Marketing Clients, 11+ Core Services, 4 Regional Branches, 99.8% Client Retention)"
+  },
+  "image_urls": {
+    "dashboard_mockup": "https://images.unsplash.com/photo-1720962158789-9389a4f399da?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwzfHxtb2Rlcm4lMjBzb2Z0d2FyZSUyMGVuZ2luZWVyaW5nJTIwZGFzaGJvYXJkJTIwZGFyayUyMHRlY2glMjBhYnN0cmFjdCUyMGRpZ2l0YWwlMjB3YXZlfGVufDB8fHx8MTc5NDM5OTk1OXww&ixlib=rb-4.1.0&q=85",
+    "tech_code_abstract": "https://images.unsplash.com/photo-1604591259403-81d6c9cf87d7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBzb2Z0d2FyZSUyMGVuZ2luZWVyaW5nJTIwZGFzaGJvYXJkJTIwZGFyayUyMHRlY2glMjBhYnN0cmFjdCUyMGRpZ2l0YWwlMjB3YXZlfGVufDB8fHx8MTc5NDM5OTk1OXww&ixlib=rb-4.1.0&q=85",
+    "cyber_wave": "https://images.unsplash.com/photo-1760978631985-590e3b5f4057?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwyfHxtb2Rlcm4lMjBzb2Z0d2FyZSUyMGVuZ2luZWVyaW5nJTIwZGFzaGJvYXJkJTIwZGFyayUyMHRlY2glMjBhYnN0cmFjdCUyMGRpZ2l0YWwlMjB3YXZlfGVufDB8fHx8MTc5NDM5OTk1OXww&ixlib=rb-4.1.0&q=85",
+    "team_office_workspace": "https://images.unsplash.com/photo-1629904853893-c2c8981a1dc5?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTN8MHwxfHNlYXJjaHwzfHxzb2Z0d2FyZSUyMGRldmVsb3BlciUyMHRlYW0lMjBvZmZpY2UlMjB0ZWNoJTIwd29ya3NwYWNlfGVufDB8fHx8MTc5NDM5OTk2NXww&ixlib=rb-4.1.0&q=85",
+    "mobile_app_dashboard": "https://images.unsplash.com/photo-1551650975-87deedd944c3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcHAlMjBkYXNoYm9hcmQlMjBtb2JpbGUlMjBzY3JlZW58ZW58MHx8fHwxNzk0Mzk5OTY1fDA&ixlib=rb-4.1.0&q=85"
+  },
+  "page_structure_and_features": [
+    {
+      "page": "Home",
+      "route": "/",
+      "sections": [
+        "Navigation Header with Glassmorphism, Logo wave mark, Nav items (Home, About, Services, Portfolio, Branches & Training, Contact), and CTA 'Get Free Consultation'",
+        "Kinetic Hero Section: Headline 'Empowering Businesses to Go Digital & Grow Global', animated 3D interactive Laptop/Dashboard Mockup with glass cards floating around it, live pulse badge, primary & secondary action buttons",
+        "Client Trust Marquee: Dual continuous marquee scrolling (480+ Software Clients, 353+ Digital Marketing Clients, Client logos & brand chips)",
+        "Key Impact Statistics: 480+ Software Projects Delivered, 353+ Marketing Campaigns, 11+ Core Technologies, 4 Regional Offices, 99% Satisfaction Rate (Animated Count-Up)",
+        "11 Core Services Grid: Web Development, Mobile Apps (iOS/Android), E-Commerce Systems, Custom Enterprise SaaS, Digital Marketing & SEO, UI/UX Design, Cloud Infrastructure & DevOps, AI/ML Solutions, NFC Digital Cards, Cyber Security, Government IT Systems",
+        "Products & Solutions Showcase: Food Delivery & Bike Taxi Engine, E-Commerce Suite, Hospital & Billing Admin Dashboard, NFC Business Solution, Job Portals",
+        "Interactive 5-Step Working Process: 01 Discovery & Strategy -> 02 Architecture & UI Design -> 03 Development & Coding -> 04 QA & Security Testing -> 05 Deployment & Growth",
+        "Technologies Carousel/Tabs: 7 Categories (Web/Mobile, Databases, Cloud & DevOps, UI/UX, AI/ML, Frameworks, Tools) with interactive glowing tech badges",
+        "Portfolio Highlights: Featured client projects with live category preview",
+        "Testimonials Carousel: Client reviews with ratings, company roles, and success stories",
+        "Regional Footprint & Training Institute: Rajahmundry HQ, Hyderabad Branch, Vijayawada Branch, Visakhapatnam Branch + Godavari Wave Training Institute LLP banner",
+        "High-Impact Contact CTA Banner & Footer with quick links, office addresses, legal info, social links"
+      ]
+    },
+    {
+      "page": "About Us",
+      "route": "/about",
+      "sections": [
+        "Hero Header: 'Architecting Digital Transformation from Rajahmundry to the World'",
+        "Company Story & Mission: Founded in 2024, grown to 50+ engineers & digital strategists across 4 branches",
+        "Core Values: Innovation, Transparency, Execution Excellence, Local Talent Empowerment",
+        "Leadership & Team Workspace Gallery",
+        "Branch Footprint Interactive Card Map: Rajahmundry (HQ), Hyderabad, Vijayawada, Visakhapatnam",
+        "Godavari Wave Training Institute LLP Highlight: Empowering students with real-world full-stack development skills"
+      ]
+    },
+    {
+      "page": "Services",
+      "route": "/services",
+      "sections": [
+        "Hero: 'End-to-End Technology & Digital Solutions'",
+        "Interactive Filterable Service Catalogue (11 Detailed Services with feature lists, tech stacks, deliverable timelines, and inquiry triggers)",
+        "Service Delivery Framework & SLA Guarantees",
+        "Custom Quote Estimator / Interactive Project Calculator modal/widget"
+      ]
+    },
+    {
+      "page": "Portfolio",
+      "route": "/portfolio",
+      "sections": [
+        "Hero: '40+ Digital Products Built with Precision'",
+        "Category Filters: All, Ecommerce, Food & Ride Delivery, Admin Dashboards, Mobile Apps, Digital Marketing, Government",
+        "Interactive Project Cards with modal view of specs, live links, challenge/solution highlights, tech stack badges"
+      ]
+    },
+    {
+      "page": "Contact",
+      "route": "/contact",
+      "sections": [
+        "Hero: 'Let's Build Something Exceptional Together'",
+        "Interactive Enquiry Form (saves enquiry to state/local backend mock with Sonner toast feedback)",
+        "4 Branch Location Cards with full addresses, contact phone numbers, email, embedded interactive map toggle",
+        "Training Institute Contact Info & Direct Inquiry"
+      ]
+    }
+  ],
+  "instructions_to_main_agent": [
+    "JavaScript (.js / .jsx) codebase - DO NOT use TypeScript syntax or types",
+    "Ensure Framer Motion is heavily utilized for scroll reveals, staggered child cards, and smooth hover scales",
+    "Use Lucide icons (lucide-react) for all technical, service, and contact icons",
+    "Use Sonner for contact form submission and interactive feedback toasts",
+    "Header MUST be fixed/sticky with glassmorphism (backdrop-blur-xl bg-[#050B16]/80 border-b border-cyan-500/10 z-50)",
+    "Every button MUST have a dark navy to electric blue gradient hover with glowing border effect",
+    "CRITICAL: Add data-testid attributes to ALL interactive elements (buttons, nav links, inputs, service filters, project cards, branch cards, tabs, form controls)"
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Dark colors look good when used independently without generic flat gradients. Use deep dark navy #050B16 with selective cyan glows",
+    "Do NOT make generic centered layouts. Use offset Swiss grid, glass cards, bento grids, and diagonal tech lines",
+    "Create depth through layered design elements with z-index hierarchy (glowing ambient backdrops z-0, cards z-10, floating badges z-20)",
+    "Use glass-morphism effects with backdrop filters (backdrop-blur-md to backdrop-blur-xl)",
+    "You MUST NOT apply universal transition (e.g. transition: all). Add specific transitions (e.g. transition: border-color 0.3s ease, transform 0.3s ease)",
+    "You MUST NOT center align the app container (.App { text-align: center }). Preserve natural left reading flow for content",
+    "NEVER use emoji characters 🤖🧠💭💡🔮🎯 as UI icons. Use clean Lucide-react vectors",
+    "Use generous padding: p-6 to p-12 inside containers to avoid border collision",
+    "All interactive and key informational elements MUST include a data-testid attribute (e.g., data-testid='nav-link-services', data-testid='hero-cta-button', data-testid='contact-submit-button')"
+  ]
+}

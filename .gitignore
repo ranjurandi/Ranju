@@ -1,0 +1,41 @@
+# Environment secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Private uploads
+**/private_uploads/
+**/career_resumes/
+
+# Dependencies
+node_modules/
+
+# Build files
+build/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Private keys
+*.pem
+*.key
+
+# Emergent local files
+**/.emergent/

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="api-base" content="http://localhost:8000/api" />
+    <meta name="theme-color" content="#050b16" />
+    <title>Admin Dashboard | Godavari Wave Technologies</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js?v=20231113" defer></script>
+  </head>
+  <body>
+    <main id="login-view" class="login-shell">
+      <form id="login-form" class="login-card">
+        <p class="eyebrow">Godavari Wave Technologies</p>
+        <h1>Admin sign in</h1>
+        <p class="muted">Sign in with your configured administrator account.</p>
+        <label>
+          Username
+          <input name="username" autocomplete="username" required maxlength="160" />
+        </label>
+        <label>
+          Password
+          <span class="password-field">
+            <input id="admin-password" name="password" type="password" autocomplete="current-password" required />
+            <button
+              id="password-toggle"
+              class="password-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+            >
+              <svg class="password-eye-open" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg class="password-eye-closed" viewBox="0 0 24 24" aria-hidden="true" hidden>
+                <path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a15.7 15.7 0 0 1-3.2 4.1M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1.4 0 2.7-.3 3.8-.8"></path>
+              </svg>
+            </button>
+          </span>
+        </label>
+        <p id="login-error" class="error" role="alert" hidden></p>
+        <button class="primary-button" type="submit">Sign in</button>
+      </form>
+    </main>
+
+    <div id="dashboard-view" class="dashboard-shell" hidden>
+      <aside class="sidebar">
+        <a class="brand" href="#" aria-label="Godavari Wave admin home">
+          <span class="brand-mark">GW</span>
+          <span><strong>GODAVARI WAVE</strong><small>ADMIN CONSOLE</small></span>
+        </a>
+        <nav class="side-nav" aria-label="Admin dashboard">
+          <button type="button" data-view="dashboard" class="active">Dashboard</button>
+          <button type="button" data-view="jobs">Job Requirements</button>
+          <button type="button" data-view="applications">Career Applications</button>
+          <button type="button" data-view="contacts">Contact Queries</button>
+          <button type="button" data-view="profile">Admin Profile</button>
+        </nav>
+        <button type="button" class="logout-button" data-action="logout">Secure logout</button>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Operations</p>
+            <h1 id="page-title">Dashboard</h1>
+          </div>
+          <span id="admin-identity" class="identity"></span>
+        </header>
+        <p id="notice" class="notice" role="status" hidden></p>
+        <section id="page-content" aria-live="polite"></section>
+      </main>
+    </div>
+  </body>
+</html>
