@@ -17,7 +17,6 @@ from fastapi import (
     APIRouter,
     Depends,
     FastAPI,
-    File,
     Form,
     Header,
     HTTPException,
@@ -26,6 +25,7 @@ from fastapi import (
     UploadFile,
     status,
 )
+from utils.s3_storage import generate_presigned_post, generate_presigned_get, head_object
 from fastapi.responses import FileResponse, JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import (
@@ -35,17 +35,13 @@ from pydantic import (
     Field,
     SecretStr,
     ValidationError,
-    field_validator,
-)
-from pymongo import ASCENDING, DESCENDING, IndexModel
+    field_validator,from pymongo import ASCENDING, DESCENDING, IndexModel
 from pymongo.errors import (
     ConfigurationError,
     InvalidURI,
     OperationFailure,
     PyMongoError,
-    ServerSelectionTimeoutError,
-)
-from pymongo.uri_parser import parse_uri
+    ServerSelectionTimeoutError,from pymongo.uri_parser import parse_uri
 from starlette.middleware.cors import CORSMiddleware
 
 
@@ -162,9 +158,7 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
 ADMIN_DISPLAY_NAME = os.getenv("ADMIN_DISPLAY_NAME", "Administrator")
 JWT_SECRET = os.getenv("JWT_SECRET", "")
 resume_directory = Path(
-    os.getenv("CAREER_RESUME_DIR", "private_uploads/career_resumes")
-)
-if not resume_directory.is_absolute():
+    os.getenv("CAREER_RESUME_DIR", "private_uploads/career_resumes")if not resume_directory.is_absolute():
     resume_directory = ROOT_DIR / resume_directory
 RESUME_DIRECTORY = resume_directory.resolve()
 MAX_RESUME_SIZE = 5 * 1024 * 1024
@@ -537,7 +531,22 @@ async def list_public_jobs():
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Career openings are temporarily unavailable. Check the backend MongoDB connection and retry.",
         ) from exc
-    return [serialize_job(job) for job in jobs]
+    
+@api_router.get("/careers/applications/upload-url")
+async def get_resume_upload_url(filename: str = Query(..., min_length=1)):
+    """Generate a presigned S3 POST URL for resume upload.
+    Returns the URL, fields, and the object key to be stored in the application record.
+    """
+    # Validate extension against allowed resume types
+    suffix = os.path.splitext(filename)[1].lower()
+    if suffix not in ALLOWED_RESUME_SIGNATURES:
+        raise HTTPException(status_code=400, detail="Unsupported resume file extension.")
+    try:
+        resp = generate_presigned_post(filename)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="Failed to generate upload URL.") from exc
+    return {"url": resp["url"], "fields": resp["fields"], "key": resp["key"]}
+
 
 
 @api_router.get("/admin/jobs")
@@ -547,7 +556,22 @@ async def list_admin_jobs(admin: dict = Depends(require_admin)):
         .sort("created_at", -1)
         .to_list(500)
     )
-    return [serialize_job(job) for job in jobs]
+    
+@api_router.get("/careers/applications/upload-url")
+async def get_resume_upload_url(filename: str = Query(..., min_length=1)):
+    """Generate a presigned S3 POST URL for resume upload.
+    Returns the URL, fields, and the object key to be stored in the application record.
+    """
+    # Validate extension against allowed resume types
+    suffix = os.path.splitext(filename)[1].lower()
+    if suffix not in ALLOWED_RESUME_SIGNATURES:
+        raise HTTPException(status_code=400, detail="Unsupported resume file extension.")
+    try:
+        resp = generate_presigned_post(filename)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="Failed to generate upload URL.") from exc
+    return {"url": resp["url"], "fields": resp["fields"], "key": resp["key"]}
+
 
 
 @api_router.post("/admin/jobs", status_code=status.HTTP_201_CREATED)
@@ -585,7 +609,94 @@ async def delete_job(job_id: str, admin: dict = Depends(require_admin)):
     return {"ok": True}
 
 
-@api_router.post("/careers/applications", status_code=status.HTTP_201_CREATED)
+# @api_router.post("/careers/applications", status_code=status.HTTP_201_CREATED)
+async def create_career_application(
+    job_id: str = Form(min_length=1),
+    full_name: str = Form(min_length=2, max_length=160),
+    email: str = Form(min_length=3, max_length=320),
+    phone: str = Form(min_length=7, max_length=40),
+    experience: str = Form(min_length=1, max_length=120),
+    skills: str = Form(min_length=1, max_length=2000),
+    additional_message: str = Form(default="", max_length=5000),
+    resume_key: str = Form(...),
+    resume_filename: str = Form(...),
+):
+    # Validate and parse applicant fields
+    try:
+        fields = CareerApplicationInput.model_validate(
+            {
+                "full_name": full_name.strip(),
+                "email": email.strip(),
+                "phone": phone.strip(),
+                "experience": experience.strip(),
+                "skills": skills.strip(),
+                "additional_message": additional_message.strip(),
+            }
+        )
+    except ValidationError as exc:
+        raise HTTPException(status_code=422, detail="Invalid application details.") from exc
+
+    # Verify job exists and is active
+    try:
+        job = await db.job_requirements.find_one(
+            {"id": job_id, "is_active": True},
+            {"_id": 0, "title": 1},
+        )
+    except PyMongoError as exc:
+        logging.getLogger(__name__).error(
+            "Career application job lookup failed: %s",
+            type(exc).__name__,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Applications are temporarily unavailable. Check the backend MongoDB connection and retry.",
+        ) from exc
+    if not job:
+        raise HTTPException(status_code=400, detail="This job is no longer accepting applications.")
+
+    # Validate resume extension
+    suffix = os.path.splitext(resume_filename)[1].lower()
+    if suffix not in ALLOWED_RESUME_SIGNATURES:
+        raise HTTPException(status_code=400, detail="Resume must be a PDF, DOC, or DOCX file.")
+
+    # Verify S3 object exists and meets size limits
+    try:
+        head = head_object(resume_key)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail="Uploaded resume not found or inaccessible.") from exc
+    # Ensure the key matches the expected prefix
+    if not resume_key.startswith("career_resumes/"):
+        raise HTTPException(status_code=400, detail="Invalid resume storage key.")
+    size = head.get("ContentLength") or 0
+    if size > MAX_RESUME_SIZE:
+        raise HTTPException(status_code=413, detail="Resume file must be 5 MB or smaller.")
+    # Optional: could verify content type, but we rely on extension validation
+
+    document = fields.model_dump()
+    document.update(
+        {
+            "id": str(uuid.uuid4()),
+            "job_id": job_id,
+            "position": job["title"],
+            "resume_filename": resume_filename,
+            "resume_key": resume_key,
+            "status": "Pending",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+    )
+    try:
+        await db.career_applications.insert_one(document)
+    except PyMongoError as exc:
+        logging.getLogger(__name__).error(
+            "Career application save failed: %s",
+            type(exc).__name__,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Applications are temporarily unavailable. Check the backend MongoDB connection and retry.",
+        ) from exc
+    return {"ok": True, "id": document["id"]}
+
 async def create_career_application(
     job_id: str = Form(min_length=1),
     full_name: str = Form(min_length=2, max_length=160),
@@ -718,7 +829,46 @@ async def update_application_status(
     return {"ok": True, "status": input.status}
 
 
-@api_router.get("/admin/applications/{application_id}/resume")
+@api_router.get("/admin/applications/{application_id}/resume-url")
+async def download_application_resume_url(
+    application_id: str,
+    admin: dict = Depends(require_admin),
+):
+    """Return a presigned S3 download URL for the applicant's resume.
+    Falls back to legacy local file download if `resume_key` is absent.
+    """
+    application = await db.career_applications.find_one(
+        {"id": application_id},
+        {"_id": 0, "resume_key": 1, "resume_path": 1, "resume_filename": 1},
+    )
+    if not application:
+        raise HTTPException(status_code=404, detail="Career application not found.")
+    # Prefer S3 stored resume
+    resume_key = application.get("resume_key")
+    resume_filename = application.get("resume_filename") or "resume"
+    if resume_key:
+        try:
+            url = generate_presigned_get(resume_key)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail="Failed to generate download URL.") from exc
+        return {"download_url": url, "filename": resume_filename}
+    # Legacy fallback to local storage
+    resume_path = Path(application.get("resume_path", "")).resolve()
+    if resume_path.parent != RESUME_DIRECTORY or not resume_path.is_file():
+        raise HTTPException(status_code=404, detail="Resume file not found.")
+    suffix = resume_path.suffix.lower()
+    content_types = {
+        ".pdf": "application/pdf",
+        ".doc": "application/msword",
+        ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    }
+    return FileResponse(
+        resume_path,
+        media_type=content_types.get(suffix, "application/octet-stream"),
+        filename=Path(application.get("resume_filename") or "resume").name,
+        headers={"X-Content-Type-Options": "nosniff"},
+    )
+
 async def download_application_resume(
     application_id: str,
     admin: dict = Depends(require_admin),
@@ -804,14 +954,10 @@ app.add_middleware(
     allow_origins=cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
-)
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'logger = logging.getLogger(__name__)
 
 @app.on_event("startup")
 async def start_index_build():

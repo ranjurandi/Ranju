@@ -140,6 +140,60 @@ export default function Career() {
 
     setSending(true);
     setApplicationError("");
+    try {
+      // 1. Get presigned upload URL from backend
+      const uploadResp = await axios.get(`${API}/careers/applications/upload-url`, {
+        params: { filename: resume.name },
+      });
+      const { url, fields, key } = uploadResp.data;
+
+      // 2. Upload file directly to S3
+      const s3Form = new FormData();
+      // Append all required fields returned by presigned POST
+      Object.entries(fields).forEach(([k, v]) => s3Form.append(k, v));
+      // The file must be appended with the field name 'file' or as specified by fields.key
+      s3Form.append('file', resume);
+      await axios.post(url, s3Form, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+      // 3. Submit application to backend with resume_key and resume_filename
+      const application = new FormData();
+      application.append("job_id", selectedJob.id);
+      Object.entries(form).forEach(([key, value]) => application.append(key, value));
+      application.append("resume_key", key);
+      application.append("resume_filename", resume.name);
+      await axios.post(`${API}/careers/applications`, application);
+
+      setSuccess(`Your application for ${selectedJob.title} was submitted successfully.`);
+      setSelectedJob(null);
+      setForm(EMPTY_FORM);
+      setResume(null);
+    } catch (error) {
+      const detail = error.response?.data?.detail;
+      setApplicationError(
+        typeof detail === "string"
+          ? detail
+          : "Your application could not be submitted. Please try again."
+      );
+    } finally {
+      setSending(false);
+    }
+  }; {
+    event.preventDefault();
+    if (!selectedJob || !resume) {
+      setApplicationError("Choose a resume file before submitting your application.");
+      return;
+    }
+    if (!/\.(pdf|doc|docx)$/i.test(resume.name)) {
+      setApplicationError("Resume must be a PDF, DOC, or DOCX file.");
+      return;
+    }
+    if (resume.size > MAX_RESUME_SIZE) {
+      setApplicationError("Resume file must be 5 MB or smaller.");
+      return;
+    }
+
+    setSending(true);
+    setApplicationError("");
     const application = new FormData();
     application.append("job_id", selectedJob.id);
     Object.entries(form).forEach(([key, value]) => application.append(key, value));
